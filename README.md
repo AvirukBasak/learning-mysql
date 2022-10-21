@@ -98,28 +98,39 @@ MariaDB [testbase]> select * from tab1;
 +-------+
 | sl_no |
 +-------+
-|     0 |                                                              |     1 |                                                              +-------+                                                              2 rows in set (0.062 sec)
+|     0 |
+|     1 |
++-------+
+2 rows in set (0.062 sec)
 
 MariaDB [testbase]> if (select * from tab1) > 5, 'yes', 'no';
 ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 'yes', 'no'' at line 1
 MariaDB [testbase]> if ((select * from tab1) > 5, 'yes', 'no');
-ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1                                             MariaDB [testbase]> select sl_no as @s from tab1;                      ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '@s from tab1' at line 1
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+MariaDB [testbase]> select sl_no as @s from tab1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '@s from tab1' at line 1
 MariaDB [testbase]> select sl_no as s from tab1;
 +---+
-| s |                                                                  +---+                                                                  | 0 |
-| 1 |                                                                  +---+
+| s |
++---+
+| 0 |
+| 1 |
++---+
 2 rows in set (0.001 sec)
 
-MariaDB [testbase]> if (s>1, 'yes', 'no');                             ERROR 1327 (42000): Undeclared variable: s
-MariaDB [testbase]> if (@s>1, 'yes', 'no');                            ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+MariaDB [testbase]> if (s>1, 'yes', 'no');
+ERROR 1327 (42000): Undeclared variable: s
+MariaDB [testbase]> if (@s>1, 'yes', 'no');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
 MariaDB [testbase]> select sl_no as s from tab1
     -> if (s>1, 'yes', 'no');
 ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'if (s>1, 'yes', 'no')' at line 2
-MariaDB [testbase]> select sl_no as s if (s>1, 'yes', 'no') from tab1; ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'if (s>1, 'yes', 'no') from tab1' at line 1
-MariaDB [testbase]> select sl_no as s if (sl_no>1, 'yes', 'no') from ta
-b1;
+MariaDB [testbase]> select sl_no as s if (s>1, 'yes', 'no') from tab1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'if (s>1, 'yes', 'no') from tab1' at line 1
+MariaDB [testbase]> select sl_no as s if (sl_no>1, 'yes', 'no') from tab1;
 ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'if (sl_no>1, 'yes', 'no') from tab1' at line 1
-MariaDB [testbase]> select sl_no if (sl_no>1, 'yes', 'no') from tab1;  ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'if (sl_no>1, 'yes', 'no') from tab1' at line 1
+MariaDB [testbase]> select sl_no if (sl_no>1, 'yes', 'no') from tab1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'if (sl_no>1, 'yes', 'no') from tab1' at line 1
 MariaDB [testbase]> select sl_no as s, if (sl_no>1, 'yes', 'no') from t
 ab1;
 +---+---------------------------+
@@ -143,7 +154,8 @@ MariaDB [testbase]> select sl_no as s, if (sl_no>1, 'yes', 'no') from tab1;
 
 MariaDB [testbase]> select sl_no, field1, if (sl_no>1, 'yes', 'no') from tab1;
 ERROR 1054 (42S22): Unknown column 'field1' in 'field list'
-MariaDB [testbase]> describe tab1;                                     +-------+---------+------+-----+---------+-------+
+MariaDB [testbase]> describe tab1;
++-------+---------+------+-----+---------+-------+
 | Field | Type    | Null | Key | Default | Extra |
 +-------+---------+------+-----+---------+-------+
 | sl_no | int(11) | NO   |     | NULL    |       |
@@ -158,7 +170,8 @@ MariaDB [testbase]> alter table tab1 add column field1 varchar(32) not null;
 Query OK, 0 rows affected (0.031 sec)
 Records: 0  Duplicates: 0  Warnings: 0
 
-MariaDB [testbase]> describe tab1;                                     +--------+-------------+------+-----+---------+-------+
+MariaDB [testbase]> describe tab1;
++--------+-------------+------+-----+---------+-------+
 | Field  | Type        | Null | Key | Default | Extra |
 +--------+-------------+------+-----+---------+-------+
 | sl_no  | int(11)     | NO   |     | NULL    |       |
@@ -225,7 +238,8 @@ MariaDB [testbase]> select sl_no, field1, if (field1 = null, 'yes', 'no') from t
 +-------+--------+---------------------------------+
 3 rows in set (0.002 sec)
 
-MariaDB [testbase]> insert into tab1(sl_no, field1) values (2, null);  ERROR 1048 (23000): Column 'field1' cannot be null
+MariaDB [testbase]> insert into tab1(sl_no, field1) values (2, null);
+ERROR 1048 (23000): Column 'field1' cannot be null
 MariaDB [testbase]> insert into tab1(sl_no, field1) values (2, '');
 Query OK, 1 row affected (0.014 sec)
 
